@@ -16,7 +16,7 @@ if [[ -n "${existing_pid:-}" ]] && pid_is_running "$existing_pid"; then
 fi
 
 log "starting backend on http://127.0.0.1:8000"
-nohup bash -lc "cd \"$ROOT_DIR/backend\" && exec uv run option-pricing-lab" \
+nohup setsid bash -lc "cd \"$ROOT_DIR/backend\" && exec uv run option-pricing-lab" \
   >"$LOG_FILE" 2>&1 &
 echo $! >"$PID_FILE"
 

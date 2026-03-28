@@ -17,8 +17,27 @@ stop_process() {
   fi
 
   if pid_is_running "$pid"; then
-    kill "$pid"
-    log "stopped $name pid $pid"
+    local pgid
+    pgid="$(process_group_id "$pid" || true)"
+
+    if [[ -n "${pgid:-}" ]]; then
+      kill -"${pgid}" 2>/dev/null || true
+      sleep 1
+
+      if kill -0 -"${pgid}" 2>/dev/null; then
+        kill -TERM -"${pgid}" 2>/dev/null || true
+        sleep 1
+      fi
+
+      if kill -0 -"${pgid}" 2>/dev/null; then
+        kill -KILL -"${pgid}" 2>/dev/null || true
+      fi
+
+      log "stopped $name process group $pgid"
+    else
+      kill "$pid"
+      log "stopped $name pid $pid"
+    fi
   else
     log "$name pid file exists but process is not running"
   fi

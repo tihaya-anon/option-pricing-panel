@@ -16,7 +16,7 @@ if [[ -n "${existing_pid:-}" ]] && pid_is_running "$existing_pid"; then
 fi
 
 log "starting frontend on http://127.0.0.1:5173"
-nohup bash -lc \
+nohup setsid bash -lc \
   "cd \"$ROOT_DIR/frontend\" && exec env VITE_ENABLE_API_MOCK=false VITE_API_PROXY_TARGET=http://127.0.0.1:8000 pnpm dev -- --host 0.0.0.0 --port 5173" \
   >"$LOG_FILE" 2>&1 &
 echo $! >"$PID_FILE"

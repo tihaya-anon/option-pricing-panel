@@ -16,6 +16,11 @@ pid_is_running() {
   kill -0 "$pid" 2>/dev/null
 }
 
+process_group_id() {
+  local pid="$1"
+  ps -o pgid= -p "$pid" 2>/dev/null | tr -d '[:space:]'
+}
+
 read_pid() {
   local pid_file="$1"
   if [[ -f "$pid_file" ]]; then
