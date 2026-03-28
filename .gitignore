@@ -1,0 +1,29 @@
+# Runtime artifacts
+.run/
+*.log
+
+# OS / editor files
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Python backend
+backend/.venv/
+backend/.pytest_cache/
+backend/__pycache__/
+backend/**/*.pyc
+backend/**/*.pyo
+backend/**/*.pyd
+backend/**/*.egg-info/
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/dist-ssr/
+frontend/*.local
+
+# Local environment files
+frontend/.env.local
+frontend/.env.*.local

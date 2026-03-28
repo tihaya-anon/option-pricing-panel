@@ -1,0 +1,33 @@
+[project]
+name = "option-pricing-lab"
+version = "0.1.0"
+description = "Mini option pricer for FITE7405 assignment 3"
+readme = "README.md"
+authors = [
+    { name = "tihaya-anon", email = "chihaya_anon_0908@outlook.com" }
+]
+requires-python = ">=3.10"
+dependencies = [
+    "fastapi>=0.135.2",
+    "numpy>=2.2.6",
+    "pydantic>=2.12.5",
+    "pyyaml>=6.0.3",
+    "uvicorn>=0.42.0",
+]
+
+[dependency-groups]
+dev = [
+    "httpx>=0.28.1",
+    "pytest>=9.0.2",
+]
+
+[project.scripts]
+option-pricing-lab = "option_pricing_lab.app:main"
+export-openapi = "option_pricing_lab.export_openapi:main"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[build-system]
+requires = ["uv_build>=0.10.10,<0.11.0"]
+build-backend = "uv_build"

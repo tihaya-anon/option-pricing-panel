@@ -1,0 +1,748 @@
+openapi: 3.1.0
+info:
+  title: Option Pricing Lab API
+  description: HTTP API for the FITE7405 mini option pricer.
+  version: 0.1.0
+paths:
+  /health:
+    get:
+      tags:
+      - system
+      summary: Health
+      operationId: health_health_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+  /pricing/european:
+    post:
+      tags:
+      - pricing
+      summary: Price European
+      operationId: price_european_pricing_european_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EuropeanOptionRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PriceResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /pricing/implied-volatility:
+    post:
+      tags:
+      - pricing
+      summary: Solve Implied Volatility
+      operationId: solve_implied_volatility_pricing_implied_volatility_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ImpliedVolatilityRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImpliedVolatilityResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /pricing/american:
+    post:
+      tags:
+      - pricing
+      summary: Price American
+      operationId: price_american_pricing_american_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AmericanOptionRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PriceResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /pricing/asian/geometric:
+    post:
+      tags:
+      - pricing
+      summary: Price Geometric Asian
+      operationId: price_geometric_asian_pricing_asian_geometric_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GeometricAsianOptionRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PriceResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /pricing/asian/arithmetic:
+    post:
+      tags:
+      - pricing
+      summary: Price Arithmetic Asian
+      operationId: price_arithmetic_asian_pricing_asian_arithmetic_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ArithmeticAsianOptionRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MonteCarloEstimateResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /pricing/basket/geometric:
+    post:
+      tags:
+      - pricing
+      summary: Price Geometric Basket
+      operationId: price_geometric_basket_pricing_basket_geometric_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GeometricBasketOptionRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PriceResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /pricing/basket/arithmetic:
+    post:
+      tags:
+      - pricing
+      summary: Price Arithmetic Basket
+      operationId: price_arithmetic_basket_pricing_basket_arithmetic_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ArithmeticBasketOptionRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MonteCarloEstimateResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /pricing/kiko-put:
+    post:
+      tags:
+      - pricing
+      summary: Price Kiko Put
+      operationId: price_kiko_put_pricing_kiko_put_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/KikoPutOptionRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KikoResultResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    AmericanOptionRequest:
+      properties:
+        spot:
+          type: number
+          exclusiveMinimum: 0.0
+          title: Spot
+        strike:
+          type: number
+          exclusiveMinimum: 0.0
+          title: Strike
+        maturity:
+          type: number
+          exclusiveMinimum: 0.0
+          title: Maturity
+        rate:
+          type: number
+          title: Rate
+        volatility:
+          type: number
+          minimum: 0.0
+          title: Volatility
+        steps:
+          type: integer
+          exclusiveMinimum: 0.0
+          title: Steps
+        dividend_yield:
+          type: number
+          title: Dividend Yield
+          default: 0.0
+        option_type:
+          $ref: '#/components/schemas/OptionType'
+      additionalProperties: false
+      type: object
+      required:
+      - spot
+      - strike
+      - maturity
+      - rate
+      - volatility
+      - steps
+      - option_type
+      title: AmericanOptionRequest
+    ArithmeticAsianOptionRequest:
+      properties:
+        spot:
+          type: number
+          exclusiveMinimum: 0.0
+          title: Spot
+        strike:
+          type: number
+          exclusiveMinimum: 0.0
+          title: Strike
+        maturity:
+          type: number
+          exclusiveMinimum: 0.0
+          title: Maturity
+        rate:
+          type: number
+          title: Rate
+        volatility:
+          type: number
+          minimum: 0.0
+          title: Volatility
+        observations:
+          type: integer
+          exclusiveMinimum: 0.0
+          title: Observations
+        option_type:
+          $ref: '#/components/schemas/OptionType'
+        paths:
+          type: integer
+          exclusiveMinimum: 1.0
+          title: Paths
+          default: 100000
+        seed:
+          type: integer
+          title: Seed
+          default: 42
+        use_control_variate:
+          type: boolean
+          title: Use Control Variate
+          default: true
+      additionalProperties: false
+      type: object
+      required:
+      - spot
+      - strike
+      - maturity
+      - rate
+      - volatility
+      - observations
+      - option_type
+      title: ArithmeticAsianOptionRequest
+    ArithmeticBasketOptionRequest:
+      properties:
+        spot_1:
+          type: number
+          exclusiveMinimum: 0.0
+          title: Spot 1
+        spot_2:
+          type: number
+          exclusiveMinimum: 0.0
+          title: Spot 2
+        strike:
+          type: number
+          exclusiveMinimum: 0.0
+          title: Strike
+        maturity:
+          type: number
+          exclusiveMinimum: 0.0
+          title: Maturity
+        rate:
+          type: number
+          title: Rate
+        volatility_1:
+          type: number
+          minimum: 0.0
+          title: Volatility 1
+        volatility_2:
+          type: number
+          minimum: 0.0
+          title: Volatility 2
+        correlation:
+          type: number
+          maximum: 1.0
+          minimum: -1.0
+          title: Correlation
+        option_type:
+          $ref: '#/components/schemas/OptionType'
+        paths:
+          type: integer
+          exclusiveMinimum: 1.0
+          title: Paths
+          default: 100000
+        seed:
+          type: integer
+          title: Seed
+          default: 42
+        use_control_variate:
+          type: boolean
+          title: Use Control Variate
+          default: true
+      additionalProperties: false
+      type: object
+      required:
+      - spot_1
+      - spot_2
+      - strike
+      - maturity
+      - rate
+      - volatility_1
+      - volatility_2
+      - correlation
+      - option_type
+      title: ArithmeticBasketOptionRequest
+    ConfidenceIntervalResponse:
+      properties:
+        lower:
+          type: number
+          title: Lower
+        upper:
+          type: number
+          title: Upper
+      additionalProperties: false
+      type: object
+      required:
+      - lower
+      - upper
+      title: ConfidenceIntervalResponse
+    EuropeanOptionRequest:
+      properties:
+        spot:
+          type: number
+          exclusiveMinimum: 0.0
+          title: Spot
+        strike:
+          type: number
+          exclusiveMinimum: 0.0
+          title: Strike
+        maturity:
+          type: number
+          exclusiveMinimum: 0.0
+          title: Maturity
+        rate:
+          type: number
+          title: Rate
+        volatility:
+          type: number
+          minimum: 0.0
+          title: Volatility
+        dividend_yield:
+          type: number
+          title: Dividend Yield
+          default: 0.0
+        option_type:
+          $ref: '#/components/schemas/OptionType'
+      additionalProperties: false
+      type: object
+      required:
+      - spot
+      - strike
+      - maturity
+      - rate
+      - volatility
+      - option_type
+      title: EuropeanOptionRequest
+    GeometricAsianOptionRequest:
+      properties:
+        spot:
+          type: number
+          exclusiveMinimum: 0.0
+          title: Spot
+        strike:
+          type: number
+          exclusiveMinimum: 0.0
+          title: Strike
+        maturity:
+          type: number
+          exclusiveMinimum: 0.0
+          title: Maturity
+        rate:
+          type: number
+          title: Rate
+        volatility:
+          type: number
+          minimum: 0.0
+          title: Volatility
+        observations:
+          type: integer
+          exclusiveMinimum: 0.0
+          title: Observations
+        option_type:
+          $ref: '#/components/schemas/OptionType'
+      additionalProperties: false
+      type: object
+      required:
+      - spot
+      - strike
+      - maturity
+      - rate
+      - volatility
+      - observations
+      - option_type
+      title: GeometricAsianOptionRequest
+    GeometricBasketOptionRequest:
+      properties:
+        spot_1:
+          type: number
+          exclusiveMinimum: 0.0
+          title: Spot 1
+        spot_2:
+          type: number
+          exclusiveMinimum: 0.0
+          title: Spot 2
+        strike:
+          type: number
+          exclusiveMinimum: 0.0
+          title: Strike
+        maturity:
+          type: number
+          exclusiveMinimum: 0.0
+          title: Maturity
+        rate:
+          type: number
+          title: Rate
+        volatility_1:
+          type: number
+          minimum: 0.0
+          title: Volatility 1
+        volatility_2:
+          type: number
+          minimum: 0.0
+          title: Volatility 2
+        correlation:
+          type: number
+          maximum: 1.0
+          minimum: -1.0
+          title: Correlation
+        option_type:
+          $ref: '#/components/schemas/OptionType'
+      additionalProperties: false
+      type: object
+      required:
+      - spot_1
+      - spot_2
+      - strike
+      - maturity
+      - rate
+      - volatility_1
+      - volatility_2
+      - correlation
+      - option_type
+      title: GeometricBasketOptionRequest
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    HealthResponse:
+      properties:
+        status:
+          type: string
+          title: Status
+          default: ok
+        service:
+          type: string
+          title: Service
+          default: option-pricing-lab
+      additionalProperties: false
+      type: object
+      title: HealthResponse
+    ImpliedVolatilityRequest:
+      properties:
+        premium:
+          type: number
+          exclusiveMinimum: 0.0
+          title: Premium
+        spot:
+          type: number
+          exclusiveMinimum: 0.0
+          title: Spot
+        strike:
+          type: number
+          exclusiveMinimum: 0.0
+          title: Strike
+        maturity:
+          type: number
+          exclusiveMinimum: 0.0
+          title: Maturity
+        rate:
+          type: number
+          title: Rate
+        dividend_yield:
+          type: number
+          title: Dividend Yield
+          default: 0.0
+        option_type:
+          $ref: '#/components/schemas/OptionType'
+        initial_volatility:
+          type: number
+          exclusiveMinimum: 0.0
+          title: Initial Volatility
+          default: 0.2
+        tolerance:
+          type: number
+          exclusiveMinimum: 0.0
+          title: Tolerance
+          default: 1.0e-08
+        max_iterations:
+          type: integer
+          exclusiveMinimum: 0.0
+          title: Max Iterations
+          default: 200
+        volatility_lower_bound:
+          type: number
+          exclusiveMinimum: 0.0
+          title: Volatility Lower Bound
+          default: 1.0e-06
+        volatility_upper_bound:
+          type: number
+          exclusiveMinimum: 0.0
+          title: Volatility Upper Bound
+          default: 5.0
+      additionalProperties: false
+      type: object
+      required:
+      - premium
+      - spot
+      - strike
+      - maturity
+      - rate
+      - option_type
+      title: ImpliedVolatilityRequest
+    ImpliedVolatilityResponse:
+      properties:
+        implied_volatility:
+          type: number
+          title: Implied Volatility
+      additionalProperties: false
+      type: object
+      required:
+      - implied_volatility
+      title: ImpliedVolatilityResponse
+    KikoPutOptionRequest:
+      properties:
+        spot:
+          type: number
+          exclusiveMinimum: 0.0
+          title: Spot
+        strike:
+          type: number
+          exclusiveMinimum: 0.0
+          title: Strike
+        maturity:
+          type: number
+          exclusiveMinimum: 0.0
+          title: Maturity
+        rate:
+          type: number
+          title: Rate
+        volatility:
+          type: number
+          minimum: 0.0
+          title: Volatility
+        lower_barrier:
+          type: number
+          minimum: 0.0
+          title: Lower Barrier
+        upper_barrier:
+          type: number
+          exclusiveMinimum: 0.0
+          title: Upper Barrier
+        observations:
+          type: integer
+          exclusiveMinimum: 0.0
+          title: Observations
+        rebate:
+          type: number
+          minimum: 0.0
+          title: Rebate
+        paths:
+          type: integer
+          exclusiveMinimum: 1.0
+          title: Paths
+          default: 8192
+        delta_shift:
+          type: number
+          exclusiveMinimum: 0.0
+          title: Delta Shift
+          default: 0.5
+      additionalProperties: false
+      type: object
+      required:
+      - spot
+      - strike
+      - maturity
+      - rate
+      - volatility
+      - lower_barrier
+      - upper_barrier
+      - observations
+      - rebate
+      title: KikoPutOptionRequest
+    KikoResultResponse:
+      properties:
+        price:
+          type: number
+          title: Price
+        delta:
+          type: number
+          title: Delta
+        std_error:
+          type: number
+          title: Std Error
+        confidence_interval:
+          $ref: '#/components/schemas/ConfidenceIntervalResponse'
+      additionalProperties: false
+      type: object
+      required:
+      - price
+      - delta
+      - std_error
+      - confidence_interval
+      title: KikoResultResponse
+    MonteCarloEstimateResponse:
+      properties:
+        price:
+          type: number
+          title: Price
+        std_error:
+          type: number
+          title: Std Error
+        confidence_interval:
+          $ref: '#/components/schemas/ConfidenceIntervalResponse'
+      additionalProperties: false
+      type: object
+      required:
+      - price
+      - std_error
+      - confidence_interval
+      title: MonteCarloEstimateResponse
+    OptionType:
+      type: string
+      enum:
+      - call
+      - put
+      title: OptionType
+    PriceResponse:
+      properties:
+        price:
+          type: number
+          title: Price
+      additionalProperties: false
+      type: object
+      required:
+      - price
+      title: PriceResponse
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
